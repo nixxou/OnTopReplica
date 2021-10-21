@@ -30,7 +30,13 @@
             this.lblHotKeyShowHide = new System.Windows.Forms.Label();
             this.txtHotKeyShowHide = new OnTopReplica.HotKeyTextBox();
             this.lblHotKeyClone = new System.Windows.Forms.Label();
+
+            
             this.txtHotKeyClone = new OnTopReplica.HotKeyTextBox();
+
+            this.txtHotKeyPassT = new OnTopReplica.HotKeyTextBox();
+            this.lblHotKeyPassT = new System.Windows.Forms.Label();
+
             this.groupLanguage = new System.Windows.Forms.GroupBox();
             this.comboLanguage = new OnTopReplica.ImageComboBox();
             this.lblLanguage = new System.Windows.Forms.Label();
@@ -72,6 +78,10 @@
             this.groupHotkeys.Controls.Add(this.txtHotKeyShowHide);
             this.groupHotkeys.Controls.Add(this.lblHotKeyClone);
             this.groupHotkeys.Controls.Add(this.txtHotKeyClone);
+
+            this.groupHotkeys.Controls.Add(this.lblHotKeyPassT);
+            this.groupHotkeys.Controls.Add(this.txtHotKeyPassT);
+
             this.groupHotkeys.Location = new System.Drawing.Point(3, 89);
             this.groupHotkeys.Name = "groupHotkeys";
             this.groupHotkeys.Size = new System.Drawing.Size(294, 130);
@@ -80,7 +90,8 @@
             this.groupHotkeys.Text = "Hot keys:";
             // 
             // label1
-            // 
+            //
+            /*
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.Location = new System.Drawing.Point(7, 78);
@@ -88,6 +99,7 @@
             this.label1.Size = new System.Drawing.Size(182, 50);
             this.label1.TabIndex = 4;
             this.label1.Text = "These system-wide shortcuts can also be used when OnTopReplica is not in focus.";
+            */
             // 
             // lblHotKeyShowHide
             // 
@@ -128,6 +140,32 @@
             this.txtHotKeyClone.ReadOnly = true;
             this.txtHotKeyClone.Size = new System.Drawing.Size(181, 23);
             this.txtHotKeyClone.TabIndex = 0;
+
+
+
+            // 
+            // lblHotKeyPassT
+            // 
+            this.lblHotKeyPassT.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHotKeyPassT.BackColor = System.Drawing.Color.Transparent;
+            this.lblHotKeyPassT.Location = new System.Drawing.Point(196, 85);
+            this.lblHotKeyPassT.Name = "lblHotKeyPassT";
+            this.lblHotKeyPassT.Size = new System.Drawing.Size(91, 33);
+            this.lblHotKeyPassT.TabIndex = 1;
+            this.lblHotKeyPassT.Text = "bbb";
+            // 
+            // txtHotKeyPassT
+            // 
+            this.txtHotKeyPassT.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtHotKeyPassT.Location = new System.Drawing.Point(7, 82);
+            this.txtHotKeyPassT.Name = "txtHotKeyPassT";
+            this.txtHotKeyPassT.ReadOnly = true;
+            this.txtHotKeyPassT.Size = new System.Drawing.Size(181, 23);
+            this.txtHotKeyPassT.TabIndex = 0;
+
+
+
             // 
             // groupLanguage
             // 
@@ -194,9 +232,12 @@
         private ImageComboBox comboLanguage;
         private System.Windows.Forms.GroupBox groupHotkeys;
         private HotKeyTextBox txtHotKeyClone;
+        private HotKeyTextBox txtHotKeyPassT;
+        
         private System.Windows.Forms.Label lblHotKeyShowHide;
         private HotKeyTextBox txtHotKeyShowHide;
         private System.Windows.Forms.Label lblHotKeyClone;
+        private System.Windows.Forms.Label lblHotKeyPassT;
         private System.Windows.Forms.Label label1;
     }
 }

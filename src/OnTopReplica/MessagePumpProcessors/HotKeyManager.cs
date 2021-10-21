@@ -4,8 +4,46 @@ using System.Text;
 using System.Windows.Forms;
 using OnTopReplica.Native;
 using OnTopReplica.Properties;
+using System.Runtime.InteropServices;
+
 
 namespace OnTopReplica.MessagePumpProcessors {
+
+    public static class WindowsServices {
+        const int WS_EX_TRANSPARENT = 0x00000020;
+        const int GWL_EXSTYLE = (-20);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        public static extern int GetWindowLong(IntPtr hWnd, GWL nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        public static extern int SetWindowLong(IntPtr hWnd, GWL nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetLayeredWindowAttributes")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, int crKey, byte alpha, LWA dwFlags);
+
+    }
+
+    public enum GWL {
+        ExStyle = -20
+    }
+
+    public enum WS_EX {
+        Transparent = 0x20,
+        Layered = 0x80000
+    }
+
+    public enum LWA {
+        ColorKey = 0x1,
+        Alpha = 0x2
+    }
 
     /// <summary>
     /// HotKey registration helper.
@@ -97,6 +135,8 @@ namespace OnTopReplica.MessagePumpProcessors {
             ClearHandlers();
 
             RegisterHandler(Settings.Default.HotKeyCloneCurrent, HotKeyCloneHandler);
+            RegisterHandler(Settings.Default.HotKeyPassT, HotKeyPassTHandler);
+
             RegisterHandler(Settings.Default.HotKeyShowHide, HotKeyShowHideHandler);
         }
 
@@ -158,6 +198,16 @@ namespace OnTopReplica.MessagePumpProcessors {
                 return;
 
             Form.SetThumbnail(handle, null);
+        }
+
+        /// <summary>
+        /// Handles the "clone current" hotkey.
+        /// </summary>
+        void HotKeyPassTHandler() {
+            //MessageBox.Show(Form.Handle.ToString());
+            int wl = WindowsServices.GetWindowLong(Form.Handle, GWL.ExStyle);
+            wl = wl | 0x80000 | 0x20;
+            WindowsServices.SetWindowLong(Form.Handle, GWL.ExStyle, wl);
         }
 
         #endregion

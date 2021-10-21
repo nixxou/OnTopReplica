@@ -8,7 +8,8 @@ using OnTopReplica.StartupOptions;
 using OnTopReplica.Update;
 
 namespace OnTopReplica {
-    
+
+
     static class Program {
 
         public static PlatformSupport Platform { get; private set; }

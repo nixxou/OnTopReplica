@@ -177,5 +177,7 @@ namespace OnTopReplica.Native {
         [DllImport("user32.dll")]
         private static extern bool AdjustWindowRectEx(ref NRectangle clientToWindowRect, long windowStyle, bool hasMenu, long extendedWindowStyle);
 
+
+
     }
 }

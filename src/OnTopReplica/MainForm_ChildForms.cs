@@ -4,7 +4,18 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 
+using System.Diagnostics;
+
+
+
+
 namespace OnTopReplica {
+
+
+
+
+
+
 
     partial class MainForm {
 
@@ -86,7 +97,13 @@ namespace OnTopReplica {
 
         void Thumbnail_CloneClick(object sender, CloneClickEventArgs e) {
             Win32Helper.InjectFakeMouseClick(CurrentThumbnailWindowHandle.Handle, e);
+
+
+
         }
+
+
+
 
     }
 

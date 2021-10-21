@@ -50,6 +50,9 @@
     <Setting Name="HotKeyCloneCurrent" Type="System.String" Scope="User">
       <Value Profile="(Default)">[CTRL]+[SHIFT]+C</Value>
     </Setting>
+    <Setting Name="HotKeyPassT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">[CTRL]+[SHIFT]+P</Value>
+    </Setting>    
     <Setting Name="HotKeyShowHide" Type="System.String" Scope="User">
       <Value Profile="(Default)">[CTRL]+[SHIFT]+O</Value>
     </Setting>
