@@ -7,6 +7,7 @@ using OnTopReplica.Properties;
 using OnTopReplica.StartupOptions;
 using OnTopReplica.Update;
 
+
 namespace OnTopReplica {
 
 
@@ -29,6 +30,10 @@ namespace OnTopReplica {
             catch (Exception ex) {
                 MessageBox.Show(string.Format("Unable to setup application folders: {0}", ex), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            
+
+
 
             Log.Write("Launching OnTopReplica v.{0}", Application.ProductVersion);
 

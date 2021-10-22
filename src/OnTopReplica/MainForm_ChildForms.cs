@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
-
+using System.Runtime.InteropServices;
 using System.Diagnostics;
 
 
@@ -11,8 +11,58 @@ using System.Diagnostics;
 
 namespace OnTopReplica {
 
+    public static class WindowsServices {
+        const int WS_EX_TRANSPARENT = 0x00000020;
+        const int GWL_EXSTYLE = (-20);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
+        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
 
+/*[DllImport("user32.dll")]
+        static extern int GetWindowLong(IntPtr hwnd, int index);
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hwnd, int index, int newStyle);*/
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        public static extern int GetWindowLong(IntPtr hWnd, GWL nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        public static extern int SetWindowLong(IntPtr hWnd, GWL nIndex, int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetLayeredWindowAttributes")]
+        public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, int crKey, byte alpha, LWA dwFlags);
+
+        /*
+        public static void SetWindowExTransparent(IntPtr hwnd) {
+            var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_TRANSPARENT);
+        }
+
+        public static void SetWindowExNotTransparent(IntPtr hwnd) {
+            var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle & ~WS_EX_TRANSPARENT);
+        }
+        */
+    }
+
+    public enum GWL {
+        ExStyle = -20
+    }
+
+    public enum WS_EX {
+        Transparent = 0x20,
+        Layered = 0x80000
+    }
+
+    public enum LWA {
+        ColorKey = 0x1,
+        Alpha = 0x2
+    }
 
 
 
@@ -96,12 +146,21 @@ namespace OnTopReplica {
         }
 
         void Thumbnail_CloneClick(object sender, CloneClickEventArgs e) {
-            Win32Helper.InjectFakeMouseClick(CurrentThumbnailWindowHandle.Handle, e);
+            // Win32Helper.InjectFakeMouseClick(CurrentThumbnailWindowHandle.Handle, e);
+            //var windowHwnd = Process.GetCurrentProcess().MainWindowHandle;
+            //var Handle = WindowsServices.FindWindowByCaption(IntPtr.Zero, "Calculatrice");
+            //WindowsServices.SetWindowExTransparent(Handle);
 
+            int wl = WindowsServices.GetWindowLong(this.Handle, GWL.ExStyle);
+            wl = wl | 0x80000 | 0x20;
+            WindowsServices.SetWindowLong(this.Handle, GWL.ExStyle, wl);
 
 
         }
 
+        public  static void AddPassT() {
+
+        }
 
 
 

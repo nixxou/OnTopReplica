@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using OnTopReplica.Native;
 using OnTopReplica.Properties;
 using System.Runtime.InteropServices;
-
+using System.Diagnostics;
 
 namespace OnTopReplica.MessagePumpProcessors {
 
@@ -29,6 +29,22 @@ namespace OnTopReplica.MessagePumpProcessors {
         [DllImport("user32.dll", EntryPoint = "SetLayeredWindowAttributes")]
         public static extern bool SetLayeredWindowAttributes(IntPtr hWnd, int crKey, byte alpha, LWA dwFlags);
 
+        [DllImport("user32.dll")]
+        static extern bool EnumThreadWindows(int dwThreadId, EnumThreadDelegate lpfn,
+             IntPtr lParam);
+
+        delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
+
+        public static IEnumerable<IntPtr> EnumerateProcessWindowHandles(int processId) {
+            var handles = new List<IntPtr>();
+
+            foreach(ProcessThread thread in Process.GetProcessById(processId).Threads)
+                EnumThreadWindows(thread.Id,
+                    (hWnd, lParam) => { handles.Add(hWnd); return true; }, IntPtr.Zero);
+
+            return handles;
+        }
+
     }
 
     public enum GWL {
@@ -49,6 +65,10 @@ namespace OnTopReplica.MessagePumpProcessors {
     /// HotKey registration helper.
     /// </summary>
     class HotKeyManager : BaseMessagePumpProcessor {
+
+        public Dictionary<int, int> originalstyle = new Dictionary<int, int>();
+        public int selforiginalstyle = 0;
+        public bool passt = false;
 
         public HotKeyManager() {
             Enabled = true;
@@ -204,10 +224,60 @@ namespace OnTopReplica.MessagePumpProcessors {
         /// Handles the "clone current" hotkey.
         /// </summary>
         void HotKeyPassTHandler() {
-            //MessageBox.Show(Form.Handle.ToString());
-            int wl = WindowsServices.GetWindowLong(Form.Handle, GWL.ExStyle);
-            wl = wl | 0x80000 | 0x20;
-            WindowsServices.SetWindowLong(Form.Handle, GWL.ExStyle, wl);
+
+            if(this.passt == false) {
+                this.selforiginalstyle = WindowsServices.GetWindowLong(Form.Handle, GWL.ExStyle);
+                int selfIdForm = Form.Handle.ToInt32();
+                int wl = 0;
+                Process[] processlist = System.Diagnostics.Process.GetProcesses();
+                wl = WindowsServices.GetWindowLong(Form.Handle, GWL.ExStyle);
+                wl = wl | 0x80000 | 0x20;
+                WindowsServices.SetWindowLong(Form.Handle, GWL.ExStyle, wl);
+                foreach(Process process in processlist) {
+                    if(!String.IsNullOrEmpty(process.MainWindowTitle)) {
+                        if(process.MainWindowTitle == "OnTopReplica") {
+                            IntPtr PidAsIntPtr = new IntPtr(process.Id);
+                            wl = 0;
+                            foreach(var handle in WindowsServices.EnumerateProcessWindowHandles(process.Id)) {
+                                if(handle.ToInt32() == selfIdForm) break;
+                                if(this.originalstyle.ContainsKey(handle.ToInt32())) this.originalstyle[handle.ToInt32()] = WindowsServices.GetWindowLong(handle, GWL.ExStyle);
+                                else this.originalstyle.Add(handle.ToInt32(), WindowsServices.GetWindowLong(handle, GWL.ExStyle));
+                                wl = WindowsServices.GetWindowLong(handle, GWL.ExStyle);
+                                wl = wl | 0x80000 | 0x20;
+                                WindowsServices.SetWindowLong(handle, GWL.ExStyle, wl);
+                                break;
+                            }
+                        }
+                    }
+                }
+                this.passt = true;
+
+            }
+            else {
+                int selfIdForm = Form.Handle.ToInt32();
+                int wl = this.selforiginalstyle;
+                Process[] processlist = System.Diagnostics.Process.GetProcesses();
+                WindowsServices.SetWindowLong(Form.Handle, GWL.ExStyle, wl);
+                foreach(Process process in processlist) {
+                    if(!String.IsNullOrEmpty(process.MainWindowTitle)) {
+                        if(process.MainWindowTitle == "OnTopReplica") {
+                            IntPtr PidAsIntPtr = new IntPtr(process.Id);
+                            foreach(var handle in WindowsServices.EnumerateProcessWindowHandles(process.Id)) {
+                                if(handle.ToInt32() == selfIdForm) break;
+                                if(this.originalstyle.ContainsKey(handle.ToInt32())) wl = this.originalstyle[handle.ToInt32()];
+
+                                WindowsServices.SetWindowLong(handle, GWL.ExStyle, wl);
+                                break;
+                            }
+                        }
+                    }
+                }
+                this.passt = false;
+            }
+
+
+
+
         }
 
         #endregion
