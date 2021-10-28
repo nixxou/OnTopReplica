@@ -206,6 +206,12 @@ namespace OnTopReplica.MessagePumpProcessors {
             }
             else {
                 Form.EnsureMainFormVisible();
+                if(this.passt) {
+                    int wl = 0;
+                    wl = WindowsServices.GetWindowLong(Form.Handle, GWL.ExStyle);
+                    wl = wl | 0x80000 | 0x20;
+                    WindowsServices.SetWindowLong(Form.Handle, GWL.ExStyle, wl);
+                }
             }
         }
 
